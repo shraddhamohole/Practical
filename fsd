@@ -1,0 +1,501 @@
+1
+Create a simple React component called Counter that displays a number and has two buttons: "Increment" and "Decrement." The number should start at 0 and change when the buttons are clicked. [HARD] a. -Use state to manage the number. b. -Pass the initial number as a prop to the Counter component
+import React, { useState } from 'react';
+
+const Counter = ({ initialNumber }) => {
+  const [count, setCount] = useState(initialNumber || 0);
+
+  const increment = () => {
+    setCount(count + 1);
+  };
+
+  const decrement = () => {
+    setCount(count - 1);
+  };
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={increment}>Increment</button>
+      <button onClick={decrement}>Decrement</button>
+    </div>
+  );
+};
+
+export default Counter;
+
+2. Build a multi-page React application that includes two pages: "Home" and "About."
+a. Create a navigation bar with links to the "Home" and "About" pages.
+b. Implement routing using a library like React Router.
+c. Each page should have a unique URL and content(any).
+npm install react-router-dom
+
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import Home from './Home';
+import About from './About';
+
+const App = () => {
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <hr />
+
+        <Route exact path="/" component={Home} />
+        <Route path="/about" component={About} />
+      </div>
+    </Router>
+  );
+};
+// Home.js
+import React from 'react';
+
+const Home = () => {
+  return (
+    <div>
+      <h2>Home</h2>
+      <p>This is the home page content.</p>
+    </div>
+  );
+};
+
+export default Home;
+
+// About.js
+import React from 'react';
+
+const About = () => {
+  return (
+    <div>
+      <h2>About</h2>
+      <p>This is the about page content.</p>
+    </div>
+  );
+};
+
+export default About;
+
+
+3 .Create a basic todo list application: (use useState() ) a. Build a component for adding, displaying, and deleting tasks. b. Use state to manage the list of tasks. c. Add a form for users to input new tasks. d. Display the list of tasks and provide a button to remove them. e. Add a counter for the total number of tasks. 
+
+import React, { useState } from 'react';
+
+const TodoList = () => {
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState('');
+
+  const addTask = () => {
+    if (newTask.trim() !== '') {
+      setTasks([...tasks, newTask]);
+      setNewTask('');
+    }
+  };
+
+  const removeTask = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(index, 1);
+    setTasks(updatedTasks);
+  };
+
+  return (
+    <div>
+      <h2>Todo List</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          addTask();
+        }}
+      >
+        <label>
+          New Task:
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+          />
+        </label>
+        <button type="submit">Add Task</button>
+      </form>
+
+      <ul>
+        {tasks.map((task, index) => (
+          <li key={index}>
+            {task}
+            <button onClick={() => removeTask(index)}>Remove</button>
+          </li>
+        ))}
+      </ul>
+
+      <p>Total Tasks: {tasks.length}</p>
+    </div>
+  );
+};
+
+export default TodoList;
+
+//App.js
+
+import React from 'react';
+import TodoList from './TodoList';
+
+const App = () => {
+  return (
+    <div>
+      <TodoList />
+    </div>
+  );
+};
+
+export default App;
+
+4. Create two components ParentComponent ChildComponent a. ParentComponent passes prop as name to ChildComponent b. ChildComponent Displays name e.g. “ Hi <name>”
+
+// ParentComponent.js
+import React from 'react';
+import ChildComponent from './ChildComponent';
+
+const ParentComponent = () => {
+  const name = 'John';
+
+  return (
+    <div>
+      <h2>Parent Component</h2>
+      <ChildComponent name={name} />
+    </div>
+  );
+};
+
+export default ParentComponent;
+
+
+// ChildComponent.js
+import React from 'react';
+
+const ChildComponent = (props) => {
+  return <p>Hi {props.name}</p>;
+};
+
+export default ChildComponent;
+
+// App.js
+import React from 'react';
+import ParentComponent from './ParentComponent';
+
+const App = () => {
+  return (
+    <div>
+      <h1>My React App</h1>
+      <ParentComponent />
+    </div>
+  );
+};
+
+export default App;
+
+
+5. Print below array elements using map into the screen a. const weekDays = [“Monday”, “Tuesday”, “Wednesday”, “Thursday”, “Friday”, “Saturday”, “Sunday”]
+
+import React from 'react';
+
+const WeekDaysList = () => {
+  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  return (
+    <div>
+      <h2>Week Days</h2>
+      <ul>
+        {weekDays.map((day, index) => (
+          <li key={index}>{day}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default WeekDaysList;
+
+import React from 'react';
+import WeekDaysList from './WeekDaysList';
+
+const App = () => {
+  return (
+    <div>
+      <h1>My React App</h1>
+      <WeekDaysList />
+    </div>
+  );
+};
+
+export default App;
+
+
+
+6.Implement useEffect hook and print all three lifecycle state . a. E.g Inside mount b. E.g Inside update c. E.g Inside unmount
+
+import React, { useEffect } from 'react';
+
+const LifecycleExample = () => {
+  // Component Mounting
+  useEffect(() => {
+    console.log('Inside mount');
+    // Perform actions you want to take when the component mounts here
+
+    // The cleanup function returned by useEffect will be invoked on unmount
+    return () => {
+      console.log('Inside unmount');
+      // Perform cleanup actions here if needed
+    };
+  }, []); // The empty dependency array ensures that the effect runs only once on mount
+
+  // Component Updating
+  useEffect(() => {
+    console.log('Inside update');
+    // Perform actions you want to take when the component updates
+
+    // The cleanup function returned by useEffect will be invoked on each update
+    return () => {
+      console.log('Inside update cleanup');
+      // Perform cleanup actions specific to updates here if needed
+    };
+  }); // No dependency array means the effect runs on every update
+
+  return <div>Component Content</div>;
+};
+
+export default LifecycleExample;
+
+////App.js////
+import React from 'react';
+import LifecycleExample from './LifecycleExample';
+
+const App = () => {
+  return (
+    <div>
+      <h1>My React App</h1>
+      <LifecycleExample />
+    </div>
+  );
+};
+
+export default App;
+
+7. Print below array elements using map into the screen. a. const fruits = ["apple", "banana", "cherry", “bat”] b. Only print fruits it should remove bat and print it
+
+
+import React from 'react';
+
+const FruitsList = () => {
+  const fruits = ["apple", "banana", "cherry", "bat"];
+
+  // Use filter to exclude non-fruits
+  const filteredFruits = fruits.filter(fruit => fruit !== "bat");
+
+  return (
+    <div>
+      <h2>Fruits List</h2>
+      <ul>
+        {filteredFruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default FruitsList;
+
+
+//App.js
+
+import React from 'react';
+import FruitsList from './FruitsList';
+
+const App = () => {
+  return (
+    <div>
+      <h1>My React App</h1>
+      <FruitsList />
+    </div>
+  );
+};
+
+export default App;
+
+
+8. Create a basic todo list application: (use useReducer() ). a. Build a component for adding, displaying, and deleting tasks. b. Use state to manage the list of tasks. c. Add a form for users to input new tasks. d. Display the list of tasks and provide a button to remove them. e. Add a counter for the total number of tasks.
+
+import React, { useReducer, useState } from 'react';
+
+// Reducer function to manage the state
+const todoReducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_TASK':
+      return {
+        tasks: [...state.tasks, action.payload],
+      };
+    case 'REMOVE_TASK':
+      return {
+        tasks: state.tasks.filter((task, index) => index !== action.payload),
+      };
+    default:
+      return state;
+  }
+};
+
+const TodoList = () => {
+  // Initial state with an empty task list
+  const initialState = { tasks: [] };
+
+  // useReducer hook to manage state and actions
+  const [state, dispatch] = useReducer(todoReducer, initialState);
+
+  // Local state for the new task input
+  const [newTask, setNewTask] = useState('');
+
+  // Function to add a new task
+  const addTask = () => {
+    if (newTask.trim() !== '') {
+      dispatch({ type: 'ADD_TASK', payload: newTask });
+      setNewTask('');
+    }
+  };
+
+  // Function to remove a task
+  const removeTask = (index) => {
+    dispatch({ type: 'REMOVE_TASK', payload: index });
+  };
+
+  return (
+    <div>
+      <h2>Todo List</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          addTask();
+        }}
+      >
+        <label>
+          New Task:
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+          />
+        </label>
+        <button type="submit">Add Task</button>
+      </form>
+
+      <ul>
+        {state.tasks.map((task, index) => (
+          <li key={index}>
+            {task}
+            <button onClick={() => removeTask(index)}>Remove</button>
+          </li>
+        ))}
+      </ul>
+
+      <p>Total Tasks: {state.tasks.length}</p>
+    </div>
+  );
+};
+
+export default TodoList;
+
+//App.js
+
+import React from 'react';
+import TodoList from './TodoList';
+
+const App = () => {
+  return (
+    <div>
+      <h1>My React App</h1>
+      <TodoList />
+    </div>
+  );
+};
+
+export default App;
+
+
+9. Design login form which accepts username and password(Two text box) and submit button. a. On submit button click it should validate username and password and console log if its valid b. Validity check should be simple like username: Admin & password: Pass123 c. If any other credentials it should say unauthorized
+
+
+import React, { useState } from 'react';
+
+const LoginForm = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = () => {
+    // Simple validity check
+    if (username === 'Admin' && password === 'Pass123') {
+      console.log('Login successful!');
+    } else {
+      console.log('Unauthorized! Invalid credentials.');
+    }
+  };
+
+  return (
+    <div>
+      <h2>Login Form</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <label>
+          Username:
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          Password:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default LoginForm;
+
+
+//App.js
+
+import React from 'react';
+import LoginForm from './LoginForm';
+
+const App = () => {
+  return (
+    <div>
+      <h1>My React App</h1>
+      <LoginForm />
+    </div>
+  );
+};
+
+export default 
