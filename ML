@@ -1,0 +1,1082 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+
+# Load the handwritten digit dataset (MNIST)
+digits = load_digits()
+data = digits.data
+target = digits.target
+
+# Apply PCA to reduce the dimensionality
+n_components = 2  # You can change this to the desired number of components
+pca = PCA(n_components=n_components)
+transformed_data = pca.fit_transform(data)
+
+# Visualize the transformed data
+plt.figure(figsize=(8, 6))
+for digit in np.unique(target):
+    plt.scatter(transformed_data[target == digit, 0], transformed_data[target == digit, 1], label=str(digit), alpha=0.7)
+
+plt.title("PCA Transformation of Handwritten Digits")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.legend(title="Digit")
+plt.show()
+
+
+
+slip2
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Generate toy dataset
+np.random.seed(42)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1)
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Plot the training data and the regression line
+plt.scatter(X_train, y_train, label='Training Data')
+plt.scatter(X_test, y_test, color='red', label='Testing Data')
+plt.plot(X, model.predict(X), color='blue', label='Regression Line')
+plt.xlabel('Feature (e.g., house size)')
+plt.ylabel('House Price')
+plt.title('Simple Linear Regression for House Price Prediction')
+plt.legend()
+plt.show()
+
+
+
+slip3
+Write a python program to implement multiple Linear Regression for predicting
+ house price.
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Generate synthetic dataset with two features
+np.random.seed(42)
+X = 2 * np.random.rand(100, 2)  # Two features
+y = 4 + 3 * X[:, 0] + 5 * X[:, 1] + np.random.randn(100)
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the multiple linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Print the coefficients and intercept
+print(f'Coefficients: {model.coef_}')
+print(f'Intercept: {model.intercept_}')
+
+# Plot the testing data and the regression plane
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+ax.scatter(X_test[:, 0], X_test[:, 1], y_test, color='red', marker='o', label='Testing Data')
+ax.scatter(X_test[:, 0], X_test[:, 1], y_pred, color='blue', marker='^', label='Predicted Data')
+
+# Create a meshgrid for plotting the regression plane
+xx, yy = np.meshgrid(X_test[:, 0], X_test[:, 1])
+zz = model.coef_[0] * xx + model.coef_[1] * yy + model.intercept_
+
+ax.plot_surface(xx, yy, zz, alpha=0.5, color='gray', label='Regression Plane')
+
+ax.set_xlabel('Feature 1')
+ax.set_ylabel('Feature 2')
+ax.set_zlabel('House Price')
+ax.set_title('Multiple Linear Regression for House Price Prediction')
+ax.legend()
+
+plt.show()
+
+
+
+slip4
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+df = pd.read_csv('insurance_data.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Plot the data
+sns.scatterplot(x='Age', y='Insurance', data=df, hue='Insurance')
+plt.title('Insurance Purchase vs Age')
+plt.show()
+
+# Prepare the data
+X = df[['Age']]
+y = df['Insurance']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Plot the decision boundary
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='Age', y='Insurance', data=df, hue='Insurance', palette={0: 'blue', 1: 'orange'})
+plt.title('Logistic Regression Decision Boundary')
+plt.xlabel('Age')
+plt.ylabel('Insurance Purchase')
+
+# Plot the decision boundary
+x_decision_boundary = np.array([min(X['Age']), max(X['Age'])])
+y_decision_boundary = -(model.coef_[0][0] * x_decision_boundary + model.intercept_[0]) / model.coef_[0][1]
+plt.plot(x_decision_boundary, y_decision_boundary, color='red', linestyle='dashed', linewidth=2)
+
+plt.show()
+
+
+slip5
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('insurance_data.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Plot the data
+sns.scatterplot(x='Age', y='Insurance', data=df, hue='Insurance')
+plt.title('Insurance Purchase vs Age')
+plt.xlabel('Age')
+plt.ylabel('Insurance Purchase')
+plt.show()
+
+# Prepare the data
+X = df[['Age']]
+y = df['Insurance']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Train the logistic regression model
+model = LogisticRegression()
+model.fit(X_train_scaled, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test_scaled)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Plot the decision boundary
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='Age', y='Insurance', data=df, hue='Insurance', palette={0: 'blue', 1: 'orange'})
+plt.title('Logistic Regression Decision Boundary')
+plt.xlabel('Age')
+plt.ylabel('Insurance Purchase')
+
+# Plot the decision boundary
+x_decision_boundary = np.array([min(X['Age']), max(X['Age'])])
+y_decision_boundary = -(model.coef_[0][0] * x_decision_boundary + model.intercept_[0]) / model.coef_[0][1]
+plt.plot(x_decision_boundary, y_decision_boundary, color='red', linestyle='dashed', linewidth=2)
+
+plt.show()
+
+
+slip6
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+
+# Load the MNIST dataset
+mnist = fetch_openml('mnist_784')
+X = np.array(mnist.data.astype('float32'))
+y = np.array(mnist.target.astype('int'))
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the logistic regression model
+model = LogisticRegression(max_iter=100)
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Display some random samples and predictions
+fig, axes = plt.subplots(1, 10, figsize=(12, 2))
+for i in range(10):
+    axes[i].imshow(X_test[i].reshape(28, 28), cmap='gray')
+    axes[i].set_title(f'Predicted: {y_pred[i]}', fontsize=8)
+    axes[i].axis('off')
+plt.show()
+
+
+slip7
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn import tree
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('Decision_Tree_Dataset.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df.drop('Class', axis=1)
+y = df['Class']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the Decision Tree model
+model = DecisionTreeClassifier()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Plot the Decision Tree
+plt.figure(figsize=(12, 8))
+tree.plot_tree(model, feature_names=X.columns, class_names=model.classes_, filled=True, rounded=True)
+plt.show()
+
+slip8
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVR
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('position_sal.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Level']]
+y = df['Salary']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the linear SVM for regression
+model = SVR(kernel='linear')
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Plot the regression line
+plt.scatter(X_test, y_test, color='blue', label='Actual Data')
+plt.plot(X_test, y_pred, color='red', label='Regression Line')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.title('Linear SVM Regression for Salary Prediction')
+plt.legend()
+plt.show()
+
+
+slip9
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('iris.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df.drop('Species', axis=1)
+y = df['Species']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the linear SVM for classification
+model = SVC(kernel='linear')
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Visualize the confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues', xticklabels=model.classes_, yticklabels=model.classes_)
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+slip10
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the Iris dataset
+df = pd.read_csv('iris.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df.drop('Species', axis=1)
+y = df['Species']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the k-Nearest Neighbors model
+k_value = 3  # You can adjust the value of k
+model = KNeighborsClassifier(n_neighbors=k_value)
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Visualize the confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues', xticklabels=model.classes_, yticklabels=model.classes_)
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+slip11
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import classification_report, confusion_matrix
+
+# Load the Titanic dataset
+df = pd.read_csv('titanic.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']]
+y = df['Survived']
+
+# Fill missing values with the mean (for simplicity in this example)
+X.fillna(X.mean(), inplace=True)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the Gaussian Naïve Bayes model
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+
+slip12
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Load the income dataset
+df = pd.read_csv('income.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Income', 'Age']]
+
+# Determine the optimal number of clusters using the elbow method
+inertia_values = []
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, random_state=42)
+    kmeans.fit(X)
+    inertia_values.append(kmeans.inertia_)
+
+# Plot the elbow method to find the optimal number of clusters
+plt.plot(range(1, 11), inertia_values, marker='o')
+plt.title('Elbow Method for Optimal Number of Clusters')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia (Within-Cluster Sum of Squares)')
+plt.show()
+
+# Choose the optimal number of clusters (elbow point)
+optimal_clusters = 3
+
+# Train the k-means model with the optimal number of clusters
+kmeans = KMeans(n_clusters=optimal_clusters, random_state=42)
+df['Cluster'] = kmeans.fit_predict(X)
+
+# Display the clustered data
+print(df)
+
+# Plot the clusters
+plt.scatter(df['Income'], df['Age'], c=df['Cluster'], cmap='viridis', edgecolor='k')
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=200, marker='X', c='red', label='Centroids')
+plt.title('K-Means Clustering')
+plt.xlabel('Income')
+plt.ylabel('Age')
+plt.legend()
+plt.show()
+
+
+slip13
+import pandas as pd
+from sklearn.cluster import AgglomerativeClustering
+import matplotlib.pyplot as plt
+import scipy.cluster.hierarchy as sch
+
+# Load the income dataset
+df = pd.read_csv('income.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Income', 'Age']]
+
+# Use dendrogram to determine the optimal number of clusters
+dendrogram = sch.dendrogram(sch.linkage(X, method='ward'))
+plt.title('Dendrogram')
+plt.xlabel('Samples')
+plt.ylabel('Euclidean Distances')
+plt.show()
+
+# Choose the optimal number of clusters based on the dendrogram
+optimal_clusters = 3  # You can adjust this based on the dendrogram
+
+# Train the agglomerative clustering model
+agg_clustering = AgglomerativeClustering(n_clusters=optimal_clusters, affinity='euclidean', linkage='ward')
+df['Cluster'] = agg_clustering.fit_predict(X)
+
+# Display the clustered data
+print(df)
+
+# Plot the clusters
+plt.scatter(df['Income'], df['Age'], c=df['Cluster'], cmap='viridis', edgecolor='k')
+plt.title('Agglomerative Clustering')
+plt.xlabel('Income')
+plt.ylabel('Age')
+plt.show()
+
+
+slip14
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+
+# Generate synthetic dataset
+X, y = make_blobs(n_samples=300, centers=4, random_state=42, cluster_std=0.60)
+
+# Train the k-means model
+kmeans = KMeans(n_clusters=4, random_state=42)
+kmeans.fit(X)
+
+# Make predictions on the data
+y_kmeans = kmeans.predict(X)
+
+# Plot the original data
+plt.scatter(X[:, 0], X[:, 1], c=y, s=50, cmap='viridis')
+plt.title('Original Data')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.show()
+
+# Plot the clustered data with centroids
+plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=200, marker='X', c='red', label='Centroids')
+plt.title('K-Means Clustering')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.legend()
+plt.show()
+
+
+slip15
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import classification_report, confusion_matrix
+
+# Load the Titanic dataset
+df_titanic = pd.read_csv('titanic.csv')
+
+# Display the first few rows of the dataset
+print(df_titanic.head())
+
+# Prepare the data
+X_titanic = df_titanic[['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']]
+y_titanic = df_titanic['Survived']
+
+# Fill missing values with the mean (for simplicity in this example)
+X_titanic.fillna(X_titanic.mean(), inplace=True)
+
+# Split the data into training and testing sets
+X_train_titanic, X_test_titanic, y_train_titanic, y_test_titanic = train_test_split(X_titanic, y_titanic, test_size=0.2, random_state=42)
+
+# Train the Gaussian Naïve Bayes model
+nb_titanic = GaussianNB()
+nb_titanic.fit(X_train_titanic, y_train_titanic)
+
+# Make predictions on the test set
+y_pred_titanic = nb_titanic.predict(X_test_titanic)
+
+# Display the classification report and confusion matrix
+print("Classification Report (Titanic):")
+print(classification_report(y_test_titanic, y_pred_titanic))
+
+print("Confusion Matrix (Titanic):")
+print(confusion_matrix(y_test_titanic, y_pred_titanic))
+
+
+slip16
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+
+# Load the Iris dataset
+iris = load_iris()
+X = pd.DataFrame(iris.data, columns=iris.feature_names)
+y = pd.DataFrame(iris.target, columns=['Target'])
+
+# Display the first few rows of the dataset
+print(pd.concat([X, y], axis=1).head())
+
+# Prepare the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the k-Nearest Neighbors model
+k_value = 3  # You can adjust the value of k
+model = KNeighborsClassifier(n_neighbors=k_value)
+model.fit(X_train, y_train.values.ravel())  # Convert y_train to 1D array
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Visualize the decision boundaries (for simplicity, considering only the first two features)
+plt.figure(figsize=(8, 6))
+
+# Plot the training points
+plt.scatter(X_train.iloc[:, 0], X_train.iloc[:, 1], c=y_train.values.ravel(), cmap='viridis', edgecolors='k', s=70, label='Training Data')
+
+# Plot the testing points
+plt.scatter(X_test.iloc[:, 0], X_test.iloc[:, 1], c=y_test.values.ravel(), cmap='viridis', marker='X', s=150, label='Testing Data')
+
+# Create a meshgrid to plot the decision boundaries
+h = .02  # step size in the mesh
+x_min, x_max = X.iloc[:, 0].min() - 1, X.iloc[:, 0].max() + 1
+y_min, y_max = X.iloc[:, 1].min() - 1, X.iloc[:, 1].max() + 1
+xx, yy = pd.DataFrame.meshgrid(pd.np.arange(x_min, x_max, h), pd.np.arange(y_min, y_max, h))
+
+# Plot the decision boundaries
+Z = model.predict(pd.concat([xx.ravel(), yy.ravel()], axis=1))
+Z = Z.reshape(xx.shape)
+plt.contourf(xx, yy, Z, cmap='viridis', alpha=0.3, levels=[0, 1, 2])
+
+# Set plot labels and legend
+plt.title('K-Nearest Neighbors Decision Boundaries')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.legend()
+plt.show()
+
+
+slip17
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the Iris dataset
+df = pd.read_csv('iris.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df.drop('Species', axis=1)
+y = df['Species']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the linear SVM for classification
+model = SVC(kernel='linear')
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Visualize the confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues', xticklabels=model.classes_, yticklabels=model.classes_)
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+
+slip18
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVR
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# Load the position_sal dataset
+df = pd.read_csv('position_sal.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Level']]
+y = df['Salary']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the linear SVM for regression
+model = SVR(kernel='linear')
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Plot the regression line
+plt.scatter(X_test, y_test, color='blue', label='Actual Data')
+plt.plot(X_test, y_pred, color='red', label='Regression Line')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.title('Linear SVM Regression for Salary Prediction')
+plt.legend()
+plt.show()
+
+
+slip19
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the Decision_Tree_Dataset
+df = pd.read_csv('Decision_Tree_Dataset.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df.drop('Target', axis=1)
+y = df['Target']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the Decision Tree model for classification
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Display the classification report and confusion matrix
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+# Visualize the confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues', xticklabels=model.classes_, yticklabels=model.classes_)
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+slip20
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# Load the position_sal dataset
+df = pd.read_csv('position_sal.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Level']]
+y = df['Salary']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Polynomial Regression
+degree = 2  # You can adjust the degree of the polynomial
+poly = PolynomialFeatures(degree=degree)
+X_poly_train = poly.fit_transform(X_train)
+X_poly_test = poly.transform(X_test)
+
+# Train the Polynomial Regression model
+poly_model = LinearRegression()
+poly_model.fit(X_poly_train, y_train)
+
+# Make predictions on the test set
+y_pred = poly_model.predict(X_poly_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Plot the Polynomial Regression line
+plt.scatter(X_test, y_test, color='blue', label='Actual Data')
+plt.scatter(X_test, y_pred, color='red', label='Predicted Data')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.title(f'Polynomial Regression (Degree {degree}) for Salary Prediction')
+plt.legend()
+plt.show()
+
+
+slip21
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
+import seaborn as sns
+
+# Load the MNIST dataset
+mnist = fetch_openml('mnist_784', version=1, cache=True)
+
+# Prepare the data
+X = mnist.data.astype('float32') / 255.0  # Normalize pixel values between 0 and 1
+y = mnist.target.astype('int')
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the logistic regression model
+model = LogisticRegression(solver='lbfgs', max_iter=100)
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2%}')
+
+# Display the confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(10, 8))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(y), yticklabels=np.unique(y))
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+slip22
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the insurance_data dataset
+df = pd.read_csv('insurance_data.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Age', 'Salary']]
+y = df['Purchased']
+
+# Map categorical target variable to numerical values (optional, since Logistic Regression can handle categorical targets)
+y = y.map({'No': 0, 'Yes': 1})
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the logistic regression model
+model = LogisticRegression(solver='lbfgs')
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.2%}')
+
+# Display the classification report
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+# Display the confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6, 4))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=model.classes_, yticklabels=model.classes_)
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+slip23
+Write a python program to implement multiple Linear Regression for predicting
+house price.
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# Load the dataset (replace 'your_dataset.csv' with the actual file name)
+df = pd.read_csv('your_dataset.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Feature1', 'Feature2', 'Feature3']]  # Replace with actual feature names
+y = df['HousePrice']  # Replace with the target variable name
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the multiple linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Plot the predicted prices against the true prices
+plt.scatter(y_test, y_pred)
+plt.xlabel('True Prices')
+plt.ylabel('Predicted Prices')
+plt.title('Multiple Linear Regression: True Prices vs. Predicted Prices')
+plt.show()
+
+
+slip24
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+
+# Load the dataset (replace 'your_dataset.csv' with the actual file name)
+df = pd.read_csv('your_dataset.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Prepare the data
+X = df[['Feature']]  # Replace with the actual feature name
+y = df['HousePrice']  # Replace with the target variable name
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the simple linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+
+# Plot the regression line
+plt.scatter(X_test, y_test, color='blue', label='Actual Data')
+plt.plot(X_test, y_pred, color='red', label='Regression Line')
+plt.xlabel('Feature')
+plt.ylabel('House Price')
+plt.title('Simple Linear Regression: Feature vs. House Price')
+plt.legend()
+plt.show()
+
+
+slip25
+Write a python program to transform data with Principal Component Analysis
+(PCA). Consider handwritten digit dataset.
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.datasets import fetch_openml
+
+# Load the MNIST dataset
+mnist = fetch_openml('mnist_784', version=1, cache=True)
+
+# Prepare the data
+X = mnist.data.astype('float32') / 255.0  # Normalize pixel values between 0 and 1
+y = mnist.target.astype('int')
+
+# Apply PCA for dimensionality reduction
+n_components = 2  # Set the desired number of components
+pca = PCA(n_components=n_components)
+X_pca = pca.fit_transform(X)
+
+# Visualize the transformed data
+plt.figure(figsize=(12, 8))
+scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='tab10', s=10)
+plt.colorbar(scatter, label='Digit Class')
+plt.title('PCA Transformation of Handwritten Digits (2 Components)')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.show()
