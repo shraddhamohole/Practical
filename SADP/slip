@@ -1,0 +1,1307 @@
+slip 1
+Write a Java Program to implement I/O Decorator for converting uppercase letters to 
+lower case letters.
+import java.io.*;
+
+class LowercaseDecorator extends FilterReader {
+
+    public LowercaseDecorator(Reader in) {
+        super(in);
+    }
+
+    @Override
+    public int read() throws IOException {
+        int c = super.read();
+        if (c != -1) {
+            return Character.toLowerCase((char) c);
+        }
+        return c;
+    }
+
+    @Override
+    public int read(char[] cbuf, int off, int len) throws IOException {
+        int bytesRead = super.read(cbuf, off, len);
+        if (bytesRead != -1) {
+            for (int i = off; i < off + bytesRead; i++) {
+                cbuf[i] = Character.toLowerCase(cbuf[i]);
+            }
+        }
+        return bytesRead;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            // Wrap System.in with LowercaseDecorator
+            LowercaseDecorator lowercaseInput = new LowercaseDecorator(new InputStreamReader(System.in));
+
+            // Read input and print converted output
+            System.out.println("Enter text (Ctrl+D to finish):");
+            int c;
+            while ((c = lowercaseInput.read()) != -1) {
+                System.out.print((char) c);
+            }
+
+            // Close the stream
+            lowercaseInput.close();
+
+
+
+
+
+slip2
+Write a Java Program to implement Singleton pattern for multithreading. 
+
+class EagerThread extends Thread{
+    private static EagerThread ins=new EagerThread();
+
+    private EagerThread(){
+        System.out.println("Hello world");
+    }
+
+    public static EagerThread getIns(){
+        return ins;
+    }
+}
+
+public class singleton1{
+    public static void main(String args){
+        Thread t1=new Thread(new Runnable()
+        {
+            public void run(){
+                EagerThread e1=EagerThread.getIns();
+                System.out.println("Instance 1");
+            }
+        });
+        Thread t2=new Thread(new Runnable()
+        {
+            public void run(){
+                EagerThread e2=EagerThread.getIns();
+                System.out.println("Instance 2");
+            }
+        });
+        Thread t3=new Thread(new Runnable()
+        {
+            public void run(){
+                EagerThread e3=EagerThread.getIns();
+                System.out.println("Instance 3");
+            }
+        });
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+
+
+slip3
+Write a Java Program to implement Factory Design pattern for operating system
+example. 
+
+class factory{
+    public static void main(String[] args) {
+        OSFactory osf=new OSFactory();
+        OS o1=osf.getInt("open");
+        o1.show();
+
+        OS o2=osf.getInt("closed");
+        o2.show();
+
+        OS o3=osf.getInt(" ");
+        o3.show();
+    }
+}
+
+interface OS{
+    void show();
+}
+
+class Android implements OS{
+    public void show(){
+        System.out.println("I am Android");
+    }
+}
+class Ios implements OS{
+    public void show(){
+        System.out.println("I am Ios");
+    }
+}
+class Windows implements OS{
+    public void show(){
+        System.out.println("I am Windows");
+    }
+}
+
+class OSFactory{
+    public OS getInt(String str){
+        if(str.equalsIgnoreCase("open"))
+            return new Android();
+        else if(str.equalsIgnoreCase("closed"))
+            return new Ios();
+        else    
+            return new Windows();        
+    }
+}
+
+
+slip4
+Write a Java Program to implement Adapter pattern for Enumeration iterator.
+package Que8;
+
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class EnumerationToIteratorAdapter<T> implements Iterator<T> {
+
+    private final Enumeration<T> enumeration;
+
+    public EnumerationToIteratorAdapter(Enumeration<T> enumeration) {
+        this.enumeration = enumeration;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return enumeration.hasMoreElements();
+    }
+
+    @Override
+    public T next() {
+        if (hasNext()) {
+            return enumeration.nextElement();
+        } else {
+            throw new NoSuchElementException("No more elements in the enumeration.");
+        }
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("remove() method is not supported.");
+    }
+}
+
+
+
+slip5
+Write a Java Program to implement command pattern to test Remote Control
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Concrete Command classes
+class LightOnCommand implements Command {
+    private Light light;
+
+    public LightOnCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOn();
+    }
+}
+
+class LightOffCommand implements Command {
+    private Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOff();
+    }
+}
+
+// Receiver class
+class Light {
+    public void turnOn() {
+        System.out.println("Light is ON");
+    }
+
+    public void turnOff() {
+        System.out.println("Light is OFF");
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create instances
+        Light light = new Light();
+        Command lightOn = new LightOnCommand(light);
+        Command lightOff = new LightOffCommand(light);
+
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Test the Remote Control
+        remoteControl.setCommand(lightOn);
+        remoteControl.pressButton();  // Turns the light on
+
+        remoteControl.setCommand(lightOff);
+        remoteControl.pressButton();  // Turns the light off
+    }
+}
+
+
+slip6
+Write a Java Program to implement undo command to test Ceiling fan. 
+import java.util.Stack;
+
+// Command interface
+interface Command {
+    void execute();
+    void undo();
+}
+
+// Concrete Command classes
+class CeilingFanHighCommand implements Command {
+    private CeilingFan ceilingFan;
+    private int prevSpeed;
+
+    public CeilingFanHighCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+
+    @Override
+    public void execute() {
+        prevSpeed = ceilingFan.getSpeed();
+        ceilingFan.high();
+    }
+
+    @Override
+    public void undo() {
+        if (prevSpeed == CeilingFan.HIGH) {
+            ceilingFan.high();
+        } else if (prevSpeed == CeilingFan.MEDIUM) {
+            ceilingFan.medium();
+        } else if (prevSpeed == CeilingFan.LOW) {
+            ceilingFan.low();
+        } else if (prevSpeed == CeilingFan.OFF) {
+            ceilingFan.off();
+        }
+    }
+}
+
+class CeilingFanMediumCommand implements Command {
+    // Similar to CeilingFanHighCommand, but for medium speed
+}
+
+class CeilingFanLowCommand implements Command {
+    // Similar to CeilingFanHighCommand, but for low speed
+}
+
+class CeilingFanOffCommand implements Command {
+    // Similar to CeilingFanHighCommand, but for turning off the fan
+}
+
+// Receiver class
+class CeilingFan {
+    public static final int HIGH = 3;
+    public static final int MEDIUM = 2;
+    public static final int LOW = 1;
+    public static final int OFF = 0;
+
+    private int speed;
+
+    public void high() {
+        speed = HIGH;
+        System.out.println("Ceiling Fan is on high speed");
+    }
+
+    public void medium() {
+        speed = MEDIUM;
+        System.out.println("Ceiling Fan is on medium speed");
+    }
+
+    public void low() {
+        speed = LOW;
+        System.out.println("Ceiling Fan is on low speed");
+    }
+
+    public void off() {
+        speed = OFF;
+        System.out.println("Ceiling Fan is off");
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+    private Stack<Command> commandHistory = new Stack<>();
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+        commandHistory.push(command);
+    }
+
+    public void pressUndoButton() {
+        if (!commandHistory.isEmpty()) {
+            Command lastCommand = commandHistory.pop();
+            lastCommand.undo();
+        } else {
+            System.out.println("No command to undo");
+        }
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create instances
+        CeilingFan ceilingFan = new CeilingFan();
+        Command highCommand = new CeilingFanHighCommand(ceilingFan);
+        Command mediumCommand = new CeilingFanMediumCommand(ceilingFan);
+        Command lowCommand = new CeilingFanLowCommand(ceilingFan);
+        Command offCommand = new CeilingFanOffCommand(ceilingFan);
+
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Test the Ceiling Fan with Undo feature
+        remoteControl.setCommand(highCommand);
+        remoteControl.pressButton();  // Turns the fan on high
+        remoteControl.pressUndoButton();  // Undoes the last command (turns the fan off)
+
+        remoteControl.setCommand(mediumCommand);
+        remoteControl.pressButton();  // Turns the fan on medium
+        remoteControl.setCommand(lowCommand);
+        remoteControl.pressButton();  // Turns the fan on low
+
+        remoteControl.pressUndoButton();  // Undoes the last command (turns the fan back to medium)
+    }
+}
+
+
+slip7
+Write a Java Program to implement State Pattern for Gumball Machine. Create 
+instance variable that holds current state from there, we just need to handle all 
+actions, behaviors and state transition that can happen
+
+// State interface
+interface State {
+    void insertCoin();
+    void ejectCoin();
+    void turnCrank();
+    void dispense();
+}
+
+// Concrete State classes
+class NoCoinState implements State {
+    private GumballMachine gumballMachine;
+
+    public NoCoinState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertCoin() {
+        System.out.println("You inserted a coin");
+        gumballMachine.setState(gumballMachine.getHasCoinState());
+    }
+
+    @Override
+    public void ejectCoin() {
+        System.out.println("You haven't inserted a coin");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("You turned, but there's no coin");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("You need to pay first");
+    }
+}
+
+class HasCoinState implements State {
+    private GumballMachine gumballMachine;
+
+    public HasCoinState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertCoin() {
+        System.out.println("You can't insert another coin");
+    }
+
+    @Override
+    public void ejectCoin() {
+        System.out.println("Coin returned");
+        gumballMachine.setState(gumballMachine.getNoCoinState());
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("You turned... ");
+        gumballMachine.setState(gumballMachine.getSoldState());
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("No gumball dispensed");
+    }
+}
+
+class SoldState implements State {
+    private GumballMachine gumballMachine;
+
+    public SoldState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertCoin() {
+        System.out.println("Please wait, we're already giving you a gumball");
+    }
+
+    @Override
+    public void ejectCoin() {
+        System.out.println("Sorry, you already turned the crank");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("Turning twice doesn't get you another gumball!");
+    }
+
+    @Override
+    public void dispense() {
+        gumballMachine.releaseBall();
+        if (gumballMachine.getCount() > 0) {
+            gumballMachine.setState(gumballMachine.getNoCoinState());
+        } else {
+            System.out.println("Oops, out of gumballs!");
+            gumballMachine.setState(gumballMachine.getSoldOutState());
+        }
+    }
+}
+
+class SoldOutState implements State {
+    private GumballMachine gumballMachine;
+
+    public SoldOutState(GumballMachine gumballMachine) {
+        this.gumballMachine = gumballMachine;
+    }
+
+    @Override
+    public void insertCoin() {
+        System.out.println("Sorry, gumballs are sold out");
+    }
+
+    @Override
+    public void ejectCoin() {
+        System.out.println("Sorry, gumballs are sold out");
+    }
+
+    @Override
+    public void turnCrank() {
+        System.out.println("Sorry, gumballs are sold out");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("Sorry, gumballs are sold out");
+    }
+}
+
+// Context class (Gumball Machine)
+class GumballMachine {
+    private State noCoinState;
+    private State hasCoinState;
+    private State soldState;
+    private State soldOutState;
+
+    private State currentState;
+    private int count = 0;
+
+    public GumballMachine(int numberOfGumballs) {
+        noCoinState = new NoCoinState(this);
+        hasCoinState = new HasCoinState(this);
+        soldState = new SoldState(this);
+        soldOutState = new SoldOutState(this);
+
+        count = numberOfGumballs;
+        if (count > 0) {
+            currentState = noCoinState;
+        } else {
+            currentState = soldOutState;
+        }
+    }
+
+    public void insertCoin() {
+        currentState.insertCoin();
+    }
+
+    public void ejectCoin() {
+        currentState.ejectCoin();
+    }
+
+    public void turnCrank() {
+        currentState.turnCrank();
+        currentState.dispense();
+    }
+
+    // Other methods for managing the gumball machine
+
+    public void releaseBall() {
+        System.out.println("A gumball comes rolling out the slot");
+        if (count != 0) {
+            count--;
+        }
+    }
+
+    public State getNoCoinState() {
+        return noCoinState;
+    }
+
+    public State getHasCoinState() {
+        return hasCoinState;
+    }
+
+    public State getSoldState() {
+        return soldState;
+    }
+
+    public State getSoldOutState() {
+        return soldOutState;
+    }
+
+    public State getState() {
+        return currentState;
+    }
+
+    public void setState(State state) {
+        currentState = state;
+    }
+
+    public int getCount() {
+        return count;
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        GumballMachine gumballMachine = new GumballMachine(5);
+
+        // Test the Gumball Machine with State Pattern
+        gumballMachine.insertCoin();
+        gumballMachine.turnCrank();
+
+        gumballMachine.insertCoin();
+        gumballMachine.ejectCoin();
+        gumballMachine.turnCrank();
+
+        gumballMachine.insertCoin();
+        gumballMachine.turnCrank();
+        gumballMachine.insertCoin();
+        gumballMachine.turnCrank();
+        gumballMachine.insertCoin();
+        gumballMachine.turnCrank();
+    }
+}
+
+slip 8
+Write a Java program to implement Adapter pattern to design Heart Model to 
+Beat Model
+// Target interface (BeatModel)
+interface BeatModel {
+    void start();
+    void stop();
+    void increaseBPM();
+    void decreaseBPM();
+    int getBPM();
+}
+
+// Adaptee class (HeartModel)
+class HeartModel {
+    private int heartRate;
+
+    public void increaseHeartRate() {
+        heartRate += 10;
+        System.out.println("Heart rate increased to " + heartRate);
+    }
+
+    public void decreaseHeartRate() {
+        heartRate -= 10;
+        System.out.println("Heart rate decreased to " + heartRate);
+    }
+
+    public int getHeartRate() {
+        return heartRate;
+    }
+}
+
+// Adapter class
+class HeartModelAdapter implements BeatModel {
+    private HeartModel heartModel;
+
+    public HeartModelAdapter(HeartModel heartModel) {
+        this.heartModel = heartModel;
+    }
+
+    @Override
+    public void start() {
+        System.out.println("Starting heart model");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Stopping heart model");
+    }
+
+    @Override
+    public void increaseBPM() {
+        heartModel.increaseHeartRate();
+    }
+
+    @Override
+    public void decreaseBPM() {
+        heartModel.decreaseHeartRate();
+    }
+
+    @Override
+    public int getBPM() {
+        return heartModel.getHeartRate();
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create a HeartModel instance
+        HeartModel heartModel = new HeartModel();
+
+        // Create an adapter for HeartModel
+        BeatModel beatModel = new HeartModelAdapter(heartModel);
+
+        // Test the BeatModel interface
+        beatModel.start();
+        beatModel.increaseBPM();
+        beatModel.decreaseBPM();
+        beatModel.stop();
+
+        // Note: The client code interacts with the BeatModel interface without knowing about the underlying HeartModel.
+    }
+}
+
+slip9
+Write a Java Program to implement Strategy Design pattern for arithmetic 
+operations.
+// Strategy interface
+interface ArithmeticOperation {
+    int performOperation(int num1, int num2);
+}
+
+// Concrete Strategy classes
+class Addition implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 + num2;
+    }
+}
+
+class Subtraction implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 - num2;
+    }
+}
+
+class Multiplication implements ArithmeticOperation {
+    @Override
+    public int performOperation(int num1, int num2) {
+        return num1 * num2;
+    }
+}
+
+// Context class
+class Calculator {
+    private ArithmeticOperation arithmeticOperation;
+
+    public void setArithmeticOperation(ArithmeticOperation arithmeticOperation) {
+        this.arithmeticOperation = arithmeticOperation;
+    }
+
+    public int executeOperation(int num1, int num2) {
+        if (arithmeticOperation == null) {
+            throw new IllegalStateException("Arithmetic operation is not set");
+        }
+        return arithmeticOperation.performOperation(num1, num2);
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create instances of strategy classes
+        ArithmeticOperation addition = new Addition();
+        ArithmeticOperation subtraction = new Subtraction();
+        ArithmeticOperation multiplication = new Multiplication();
+
+        // Create context (Calculator)
+        Calculator calculator = new Calculator();
+
+        // Test different arithmetic operations
+        calculator.setArithmeticOperation(addition);
+        System.out.println("Addition Result: " + calculator.executeOperation(5, 3));
+
+        calculator.setArithmeticOperation(subtraction);
+        System.out.println("Subtraction Result: " + calculator.executeOperation(8, 2));
+
+        calculator.setArithmeticOperation(multiplication);
+        System.out.println("Multiplication Result: " + calculator.executeOperation(4, 6));
+    }
+}
+
+
+slip 10
+Write a Java Program to implement Façade design pattern for Shape.
+// Subsystem: Circle
+class Circle {
+    public void draw() {
+        System.out.println("Drawing Circle");
+    }
+}
+
+// Subsystem: Rectangle
+class Rectangle {
+    public void draw() {
+        System.out.println("Drawing Rectangle");
+    }
+}
+
+// Subsystem: Square
+class Square {
+    public void draw() {
+        System.out.println("Drawing Square");
+    }
+}
+
+// Facade class
+class ShapeFacade {
+    private Circle circle;
+    private Rectangle rectangle;
+    private Square square;
+
+    public ShapeFacade() {
+        this.circle = new Circle();
+        this.rectangle = new Rectangle();
+        this.square = new Square();
+    }
+
+    public void drawCircle() {
+        circle.draw();
+    }
+
+    public void drawRectangle() {
+        rectangle.draw();
+    }
+
+    public void drawSquare() {
+        square.draw();
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create a ShapeFacade
+        ShapeFacade shapeFacade = new ShapeFacade();
+
+        // Use the Facade to draw different shapes
+        shapeFacade.drawCircle();
+        shapeFacade.drawRectangle();
+        shapeFacade.drawSquare();
+    }
+}
+
+
+slip11
+
+ Write a Java Program to implement Abstract Factory Pattern for Bank and Loan.
+
+// Abstract Product: Bank
+interface Bank {
+    String getBankName();
+}
+
+// Concrete Products
+class HDFCBank implements Bank {
+    @Override
+    public String getBankName() {
+        return "HDFC Bank";
+    }
+}
+
+class ICICIBank implements Bank {
+    @Override
+    public String getBankName() {
+        return "ICICI Bank";
+    }
+}
+
+// Abstract Product: Loan
+interface Loan {
+    String getLoanType();
+}
+
+// Concrete Products
+class HomeLoan implements Loan {
+    @Override
+    public String getLoanType() {
+        return "Home Loan";
+    }
+}
+
+class PersonalLoan implements Loan {
+    @Override
+    public String getLoanType() {
+        return "Personal Loan";
+    }
+}
+
+// Abstract Factory
+interface LoanFactory {
+    Bank createBank();
+    Loan createLoan();
+}
+
+// Concrete Factories
+class HDFCLoanFactory implements LoanFactory {
+    @Override
+    public Bank createBank() {
+        return new HDFCBank();
+    }
+
+    @Override
+    public Loan createLoan() {
+        return new HomeLoan();
+    }
+}
+
+class ICICILoanFactory implements LoanFactory {
+    @Override
+    public Bank createBank() {
+        return new ICICIBank();
+    }
+
+    @Override
+    public Loan createLoan() {
+        return new PersonalLoan();
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create HDFC Loan Factory
+        LoanFactory hdfcLoanFactory = new HDFCLoanFactory();
+        Bank hdfcBank = hdfcLoanFactory.createBank();
+        Loan homeLoan = hdfcLoanFactory.createLoan();
+
+        System.out.println("Bank: " + hdfcBank.getBankName());
+        System.out.println("Loan Type: " + homeLoan.getLoanType());
+
+        System.out.println();
+
+        // Create ICICI Loan Factory
+        LoanFactory iciciLoanFactory = new ICICILoanFactory();
+        Bank iciciBank = iciciLoanFactory.createBank();
+        Loan personalLoan = iciciLoanFactory.createLoan();
+
+        System.out.println("Bank: " + iciciBank.getBankName());
+        System.out.println("Loan Type: " + personalLoan.getLoanType());
+    }
+}
+
+slip12
+Write a Java Program to implement Factory method for Pizza Store with 
+createPizza(), orederPizza(), prepare(), Bake(), cut(), box(). Use this to create 
+variety of pizza’s like NyStyleCheesePizza, ChicagoStyleCheesePizza etc.
+// Abstract Product: Pizza
+abstract class Pizza {
+    String name;
+
+    abstract void prepare();
+
+    void bake() {
+        System.out.println("Baking the pizza");
+    }
+
+    void cut() {
+        System.out.println("Cutting the pizza");
+    }
+
+    void box() {
+        System.out.println("Boxing the pizza");
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+// Concrete Products
+class NyStyleCheesePizza extends Pizza {
+    public NyStyleCheesePizza() {
+        name = "NY Style Cheese Pizza";
+    }
+
+    @Override
+    void prepare() {
+        System.out.println("Preparing NY Style Cheese Pizza");
+    }
+}
+
+class ChicagoStyleCheesePizza extends Pizza {
+    public ChicagoStyleCheesePizza() {
+        name = "Chicago Style Cheese Pizza";
+    }
+
+    @Override
+    void prepare() {
+        System.out.println("Preparing Chicago Style Cheese Pizza");
+    }
+
+    @Override
+    void cut() {
+        System.out.println("Cutting the pizza into square slices");
+    }
+}
+
+// Abstract Creator: PizzaStore
+abstract class PizzaStore {
+    // Factory Method
+    abstract Pizza createPizza(String type);
+
+    // Template Method
+    final Pizza orderPizza(String type) {
+        Pizza pizza = createPizza(type);
+
+        System.out.println("Order received for " + pizza.getName());
+        pizza.prepare();
+        pizza.bake();
+        pizza.cut();
+        pizza.box();
+
+        System.out.println("Order complete for " + pizza.getName());
+
+        return pizza;
+    }
+}
+
+// Concrete Creators
+class NyPizzaStore extends PizzaStore {
+    @Override
+    Pizza createPizza(String type) {
+        if ("cheese".equalsIgnoreCase(type)) {
+            return new NyStyleCheesePizza();
+        }
+        // Add more pizza types for NY style if needed
+        return null;
+    }
+}
+
+class ChicagoPizzaStore extends PizzaStore {
+    @Override
+    Pizza createPizza(String type) {
+        if ("cheese".equalsIgnoreCase(type)) {
+            return new ChicagoStyleCheesePizza();
+        }
+        // Add more pizza types for Chicago style if needed
+        return null;
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        PizzaStore nyPizzaStore = new NyPizzaStore();
+        Pizza nyCheesePizza = nyPizzaStore.orderPizza("cheese");
+
+        System.out.println();
+
+        PizzaStore chicagoPizzaStore = new ChicagoPizzaStore();
+        Pizza chicagoCheesePizza = chicagoPizzaStore.orderPizza("cheese");
+    }
+}
+
+
+slip13=slip1
+
+
+slip14=slip8
+
+slip 15
+Write a Java Program to implement Iterator Pattern for Designing Menu like 
+Breakfast, Lunch or Dinner Menu.
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+// Aggregate interface
+interface Menu {
+    Iterator<String> createIterator();
+}
+
+// Concrete Aggregate: BreakfastMenu
+class BreakfastMenu implements Menu {
+    private List<String> items;
+
+    public BreakfastMenu() {
+        items = new ArrayList<>();
+        items.add("Eggs and Bacon");
+        items.add("Pancakes");
+        items.add("Oatmeal");
+    }
+
+    @Override
+    public Iterator<String> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Concrete Aggregate: LunchMenu
+class LunchMenu implements Menu {
+    private String[] items;
+
+    public LunchMenu() {
+        items = new String[]{"Soup", "Salad", "Sandwich"};
+    }
+
+    @Override
+    public Iterator<String> createIterator() {
+        return new LunchMenuIterator(items);
+    }
+}
+
+// Concrete Iterator for LunchMenu
+class LunchMenuIterator implements Iterator<String> {
+    private String[] items;
+    private int position = 0;
+
+    public LunchMenuIterator(String[] items) {
+        this.items = items;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return position < items.length && items[position] != null;
+    }
+
+    @Override
+    public String next() {
+        String menuItem = items[position];
+        position++;
+        return menuItem;
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create menus
+        Menu breakfastMenu = new BreakfastMenu();
+        Menu lunchMenu = new LunchMenu();
+
+        // Print items using iterators
+        System.out.println("Breakfast Menu:");
+        printMenuItems(breakfastMenu.createIterator());
+
+        System.out.println("\nLunch Menu:");
+        printMenuItems(lunchMenu.createIterator());
+    }
+
+    private static void printMenuItems(Iterator<String> iterator) {
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+    }
+}
+
+
+slip 16=slip 2
+
+slip 17=slip 9
+
+slip 18=slip11
+
+slip 19=slip5
+
+slip 20=slip 3
+
+slip 21=slip 12
+
+slip 22=slip 6
+
+slip 23=slip 3
+
+slip 24= slip 2
+
+slip 25=
+Write a Java Program to implement Iterator Pattern for Designing Menu like 
+Breakfast, Lunch or Dinner Menu. 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+// MenuItem class representing an item in the menu
+class MenuItem {
+    private String name;
+    private String description;
+
+    public MenuItem(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return name + ": " + description;
+    }
+}
+
+// Menu interface
+interface Menu {
+    Iterator<MenuItem> createIterator();
+}
+
+// Concrete Menu: BreakfastMenu
+class BreakfastMenu implements Menu {
+    private List<MenuItem> items;
+
+    public BreakfastMenu() {
+        items = new ArrayList<>();
+        addItem("Eggs and Bacon", "Scrambled eggs with crispy bacon");
+        addItem("Pancakes", "Fluffy pancakes with syrup");
+        addItem("Oatmeal", "Healthy oatmeal with fruits");
+    }
+
+    private void addItem(String name, String description) {
+        MenuItem item = new MenuItem(name, description);
+        items.add(item);
+    }
+
+    @Override
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Concrete Menu: LunchMenu
+class LunchMenu implements Menu {
+    private MenuItem[] items;
+    private int numberOfItems = 0;
+
+    public LunchMenu() {
+        items = new MenuItem[3];
+        addItem("Soup", "Vegetable soup with croutons");
+        addItem("Salad", "Fresh green salad with dressing");
+        addItem("Sandwich", "Classic sandwich with various fillings");
+    }
+
+    private void addItem(String name, String description) {
+        MenuItem item = new MenuItem(name, description);
+        if (numberOfItems < items.length) {
+            items[numberOfItems] = item;
+            numberOfItems++;
+        }
+    }
+
+    @Override
+    public Iterator<MenuItem> createIterator() {
+        return new LunchMenuIterator(items);
+    }
+}
+
+// Concrete Iterator: LunchMenuIterator
+class LunchMenuIterator implements Iterator<MenuItem> {
+    private MenuItem[] items;
+    private int position = 0;
+
+    public LunchMenuIterator(MenuItem[] items) {
+        this.items = items;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return position < items.length && items[position] != null;
+    }
+
+    @Override
+    public MenuItem next() {
+        MenuItem menuItem = items[position];
+        position++;
+        return menuItem;
+    }
+}
+
+// Client class
+public class Main {
+    public static void main(String[] args) {
+        // Create menus
+        Menu breakfastMenu = new BreakfastMenu();
+        Menu lunchMenu = new LunchMenu();
+
+        // Print menu items using iterators
+        System.out.println("Breakfast Menu:");
+        printMenuItems(breakfastMenu.createIterator());
+
+        System.out.println("\nLunch Menu:");
+        printMenuItems(lunchMenu.createIterator());
+    }
+
+    private static void printMenuItems(Iterator<MenuItem> iterator) {
+        while (iterator.hasNext()) {
+            MenuItem menuItem = iterator.next();
+            System.out.println(menuItem);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
