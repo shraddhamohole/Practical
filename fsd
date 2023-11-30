@@ -1,3 +1,10 @@
+
+command
+npx-create-app my-app
+cd my-app command 
+npm start
+
+
 1
 Create a simple React component called Counter that displays a number and has two buttons: "Increment" and "Decrement." The number should start at 0 and change when the buttons are clicked. [HARD] a. -Use state to manage the number. b. -Pass the initial number as a prop to the Counter component
 import React, { useState } from 'react';
